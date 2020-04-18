@@ -1,4 +1,4 @@
-from django_secrets import __version__
+from django_credentials import __version__
 
 
 def test_version():
