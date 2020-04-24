@@ -1,3 +1,7 @@
 # Add your secure credentials to this file.
 # Interpolation is supported based on `configparser.ExtendedInterpolation`
 # See: https://docs.python.org/3/library/configparser.html#configparser.ExtendedInterpolation
+
+[credentials]
+EXAMPLE = one
+OTHER = two
