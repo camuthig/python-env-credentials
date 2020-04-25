@@ -5,8 +5,11 @@ import sys
 
 from configparser import ConfigParser
 from configparser import ExtendedInterpolation
+from dotenv import dotenv_values, load_dotenv
+from io import StringIO
 from typing import Dict
 from typing import Optional
+from typing import Text
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
@@ -27,14 +30,6 @@ def _get_base_dir():
         frame = frame.f_back
 
 
-def get_key_path(file_path, filename):
-    return os.path.join(file_path, filename)
-
-
-def get_file_path(file_path, filename):
-    return os.path.join(file_path, filename)
-
-
 def get_key_from_path(file_path, filename):
     key = None
     with open(os.path.join(file_path, filename)) as f:
@@ -45,17 +40,16 @@ def get_key_from_path(file_path, filename):
     return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
 
 
-def get_key(path=None):
-    return get_key_from_path(get_key_path(path))
-
 class Credentials:
     key: AESGCM
     nonce: bytes
 
     _key_filename = 'master.key'
-    _config_filename = 'credentials.ini.enc'
+    _config_filename = 'credentials.env.enc'
 
-    _config: Optional[ConfigParser] = None
+    _content: Optional[str] = None
+    _values: Optional[Dict] = None
+    _loaded: bool = False
 
     def __init__(self, credentials_dir=None):
         self.credentials_dir = credentials_dir or _get_base_dir()
@@ -67,16 +61,40 @@ class Credentials:
         instance._generate_file()
         return instance
 
-    def read(self):
-        self.key, self.nonce = self._get_key()
-        self._config = self._parse_config()
+    def _read(self) -> str:
+        if self._content:
+            return self._content
+
+        if not hasattr(self, 'key') or not hasattr(self, 'nonce') or not self.key or not self.nonce:
+            self.key, self.nonce = self._get_key()
+
+        with open(self.get_config_path()) as f:
+            encrypted = f.read()
+
+        self._content =  self.key.decrypt(self.nonce, bytes.fromhex(encrypted), None).decode('utf-8')
+
+        return self._content
+
+    def values(self) -> Dict[Text, Optional[Text]]:
+        if not self._values:
+            print('test')
+            self._values = dotenv_values(stream=StringIO(self._read()))
+
+        return self._values
+
+    def load(self):
+        if self._loaded:
+            return
+
+        load_dotenv(StringIO(self._read()))
+        self._loaded = True
 
     def _generate_key(self):
-        full_file_path = get_key_path(self.credentials_dir, self._key_filename)
+        full_file_path = os.path.join(self.credentials_dir, self._key_filename)
 
         if os.path.exists(full_file_path):
             print('Key already exists')
-            key, nonce = get_key_from_path(self.credentials_dir, self._key_filename)
+            key, nonce = self._get_key()
             return full_file_path, key, nonce
 
         key = AESGCM.generate_key(128)
@@ -88,24 +106,24 @@ class Credentials:
         self.nonce = bytes.fromhex(nonce)
 
     def _generate_file(self):
-        sample_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'example.txt')
+        sample_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'example.env')
         with open(sample_path) as s:
             txt = s.read()
-            encrypted_path = get_file_path(self.credentials_dir, self._config_filename)
+            encrypted_path = os.path.join(self.credentials_dir, self._config_filename)
             if os.path.exists(encrypted_path):
                 print('Credentials file already exists')
                 return
 
             self.write_file(txt)
-        
-    def _get_key(self) -> (AESGCM, bytes):
-        return get_key_from_path(self.credentials_dir, self._key_filename)
 
-    def _parse_config(self) -> ConfigParser:
-        decrypted = self.read_file()
-        config = ConfigParser(interpolation=ExtendedInterpolation())
-        config.read_string(decrypted)
-        return config
+    def _get_key(self) -> (AESGCM, bytes):
+        key = None
+        with open(os.path.join(self.credentials_dir, self._key_filename)) as f:
+            key = f.read()
+
+        key, nonce = key.split('.', 2)
+
+        return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
 
     def get_key_path(self):
         return os.path.join(self.credentials_dir, self._key_filename)
@@ -113,14 +131,8 @@ class Credentials:
     def get_config_path(self):
         return os.path.join(self.credentials_dir, self._config_filename)
 
-
-    def get(self, key: str, default=None): 
-        return self._config['credentials'].get(key, default)
-
-    def read_file(self):
-        with open(self.get_config_path()) as f:
-            encrypted = f.read()
-        return self.key.decrypt(self.nonce, bytes.fromhex(encrypted), None).decode('utf-8')
+    def read_file(self) -> str:
+        return self._read()
 
     def write_file(self, data):
         with open(self.get_config_path(), 'w') as e:

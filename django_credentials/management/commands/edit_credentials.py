@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         creds = credentials.Credentials(credentials._get_base_dir())
-        creds.read()
         decrypted_filename: Path = Path(credentials._get_base_dir(), 'decrypted.ini')
         try:
             with open(decrypted_filename, 'w') as f:
@@ -24,4 +23,3 @@ class Command(BaseCommand):
         finally:
             if decrypted_filename.is_file():
                 os.remove(decrypted_filename)
-

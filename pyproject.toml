@@ -8,6 +8,7 @@ authors = ["Chris Muthig <camuthig@gmail.com>"]
 python = "^3.6"
 django = "^3.0"
 cryptography = "^2.9"
+python-dotenv = "^0.13.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
