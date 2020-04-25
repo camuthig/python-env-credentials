@@ -2,7 +2,7 @@ import os
 
 from django.core.management.base import BaseCommand
 
-from credentials.credentials import Credentials
+from env_credentials.credentials import Credentials
 
 from ...lib import get_base_dir
 

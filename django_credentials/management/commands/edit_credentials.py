@@ -3,7 +3,7 @@ import os
 from django.core.management.base import BaseCommand
 from pathlib import Path
 
-from credentials import credentials
+from env_credentials import credentials
 
 from ...lib import get_base_dir
 
