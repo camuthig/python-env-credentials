@@ -30,16 +30,6 @@ def _get_base_dir():
         frame = frame.f_back
 
 
-def get_key_from_path(file_path, filename):
-    key = None
-    with open(os.path.join(file_path, filename)) as f:
-        key = f.read()
-
-    key, nonce = key.split('.', 2)
-
-    return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
-
-
 class Credentials:
     key: AESGCM
     nonce: bytes
@@ -77,7 +67,6 @@ class Credentials:
 
     def values(self) -> Dict[Text, Optional[Text]]:
         if not self._values:
-            print('test')
             self._values = dotenv_values(stream=StringIO(self._read()))
 
         return self._values
