@@ -16,7 +16,7 @@ pip install env-credentials[django]
 Using poetry:
 
 ```bash
-poetry add env-credentials[django]
+poetry add env-credentials --extras django
 ```
 
 ## Usage
@@ -60,6 +60,7 @@ files
 
 ```python
 from env_credentials.credentials import Credentials
+from django_credentials.lib import get_base_dir
 
-Credentials().load()
+Credentials(get_base_dir()).load()
 ```
