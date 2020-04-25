@@ -14,22 +14,6 @@ from typing import Text
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
-# WIP this function probably belongs somewhere focused on Django
-def _get_base_dir():
-    frame = inspect.currentframe()
-    for i in range(20):
-        if frame is None:
-            print('Unable to find the base directory of the project')
-            # WIP better error handling
-            exit(1)
-
-        file_name = os.path.basename(frame.f_code.co_filename)
-        if file_name == 'manage.py':
-            return os.path.abspath(os.path.dirname(file_name))
-
-        frame = frame.f_back
-
-
 class Credentials:
     key: AESGCM
     nonce: bytes
@@ -41,8 +25,8 @@ class Credentials:
     _values: Optional[Dict] = None
     _loaded: bool = False
 
-    def __init__(self, credentials_dir=None):
-        self.credentials_dir = credentials_dir or _get_base_dir()
+    def __init__(self, credentials_dir):
+        self.credentials_dir = credentials_dir
 
     @staticmethod
     def initialize(credentials_dir=None) -> 'Credentials':

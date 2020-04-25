@@ -2,7 +2,9 @@ import os
 
 from django.core.management.base import BaseCommand
 
-from ... import credentials
+from credentials.credentials import Credentials
+
+from ...lib import get_base_dir
 
 
 class Command(BaseCommand):
@@ -10,7 +12,7 @@ class Command(BaseCommand):
 
     def _ignore_key(self, key_file):
         # WIP Consider if this is the best place for this
-        ignore_file = os.path.join(credentials._get_base_dir(), '.gitignore')
+        ignore_file = os.path.join(get_base_dir(), '.gitignore')
 
         if os.path.exists(ignore_file):
             with open(ignore_file, 'a') as f:
@@ -21,6 +23,6 @@ class Command(BaseCommand):
                    'Be sure at add the key file to your gitignore wherever it is')
 
     def handle(self, *args, **kwargs):
-        creds = credentials.Credentials.initialize(credentials._get_base_dir())
+        creds = Credentials.initialize(get_base_dir())
         self._ignore_key(creds.get_key_path())
 
