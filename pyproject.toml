@@ -1,8 +1,24 @@
 [tool.poetry]
 name = "env-credentials"
 version = "0.1.0"
-description = ""
+description = "A library to maintain and use encrypted .env files."
+license = "Apache-2.0"
 authors = ["Chris Muthig <camuthig@gmail.com>"]
+readme = 'README.md'
+repository = 'https://github.com/camuthig/python-env-credentials'
+documentation = 'https://github.com/camuthig/python-env-credentials'
+keywords = [
+    "dotenv",
+    "credentials",
+    "encrypted",
+    "settings",
+    "environment variables",
+    "env",
+]
+packages = [
+    { include = "env_credentials" },
+    { include = "django_credentials" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"
