@@ -1,4 +1,5 @@
 __pycache__
+.mypy_cache
 poetry.lock
 django_credentials.egg-info
 *.swp

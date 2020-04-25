@@ -19,10 +19,9 @@ class Command(BaseCommand):
                 rel_path = os.path.relpath(key_file, os.path.dirname(ignore_file))
                 f.write(f'\n{rel_path}')
         else:
-            print(f'Git ignore file not found at {ignore_file}. ' + \
-                   'Be sure at add the key file to your gitignore wherever it is')
+            print(f'Git ignore file not found at {ignore_file}. ' +
+                  'Be sure at add the key file to your gitignore wherever it is')
 
     def handle(self, *args, **kwargs):
         creds = Credentials.initialize(get_base_dir())
         self._ignore_key(creds.get_key_path())
-

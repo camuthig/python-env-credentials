@@ -15,4 +15,3 @@ def get_base_dir():
             return os.path.abspath(os.path.dirname(file_name))
 
         frame = frame.f_back
-

@@ -1,15 +1,14 @@
-import inspect
 import os
 import secrets
-import sys
 
-from configparser import ConfigParser
-from configparser import ExtendedInterpolation
 from dotenv import dotenv_values, load_dotenv
 from io import StringIO
+from os import PathLike
 from typing import Dict
 from typing import Optional
 from typing import Text
+from typing import Tuple
+from typing import Union
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
@@ -25,11 +24,11 @@ class Credentials:
     _values: Optional[Dict] = None
     _loaded: bool = False
 
-    def __init__(self, credentials_dir):
+    def __init__(self, credentials_dir: Union[Text, PathLike]):
         self.credentials_dir = credentials_dir
 
     @staticmethod
-    def initialize(credentials_dir=None) -> 'Credentials':
+    def initialize(credentials_dir: Union[Text, PathLike]) -> 'Credentials':
         instance = Credentials(credentials_dir)
         instance._generate_key()
         instance._generate_file()
@@ -45,7 +44,7 @@ class Credentials:
         with open(self.get_config_path()) as f:
             encrypted = f.read()
 
-        self._content =  self.key.decrypt(self.nonce, bytes.fromhex(encrypted), None).decode('utf-8')
+        self._content = self.key.decrypt(self.nonce, bytes.fromhex(encrypted), None).decode('utf-8')
 
         return self._content
 
@@ -55,11 +54,11 @@ class Credentials:
 
         return self._values
 
-    def load(self):
+    def load(self) -> None:
         if self._loaded:
             return
 
-        load_dotenv(StringIO(self._read()))
+        load_dotenv(stream=StringIO(self._read()))
         self._loaded = True
 
     def _generate_key(self):
@@ -89,7 +88,7 @@ class Credentials:
 
             self.write_file(txt)
 
-    def _get_key(self) -> (AESGCM, bytes):
+    def _get_key(self) -> Tuple[AESGCM, bytes]:
         key = None
         with open(os.path.join(self.credentials_dir, self._key_filename)) as f:
             key = f.read()
@@ -98,10 +97,10 @@ class Credentials:
 
         return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
 
-    def get_key_path(self):
+    def get_key_path(self) -> str:
         return os.path.join(self.credentials_dir, self._key_filename)
 
-    def get_config_path(self):
+    def get_config_path(self) -> str:
         return os.path.join(self.credentials_dir, self._config_filename)
 
     def read_file(self) -> str:
