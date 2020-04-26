@@ -1,3 +1,3 @@
-credentials.env.enc
-master.key
-
+testproject/credentials.env.enc
+testproject/master.key
+db.sqlite3

@@ -42,10 +42,21 @@ You can then initialize the credentials files with
 ./manage.py init_credentials
 ```
 
-This will create a two new files called `master.key` and `credentials.env.enc` in your root folder. If a `.gitignore`
-file exists in the same directory, it will also add `master.key` to it.
+This will create a two new files called `master.key` and `credentials.env.enc`. It will  default to adding these files
+to the same folder as where you attempted to load the values in the same folder as you loaded the values. If following
+these directions, then that will be in the same folder as your `settings.py` file.
+
+This will also attempt to add `master.key` to the `.gitignore` file colocated with your `manage.py` file, if it exists.
 
 **Be sure to ignore your master.key file if the gitignore file cannot be automatically updated.**
+
+Finally, add the following code to your `settings.py` file to load the credentials into `os.environ`
+
+```python
+from django_credentials import credentials
+
+credentials.load()
+```
 
 You can then edit the values in the file using
 
@@ -53,14 +64,24 @@ You can then edit the values in the file using
 ./manage.py edit_credentials
 ```
 
-Be sure that your `$EDITOR` environment variable is set, as that is what the decrypted file will be opened with.
+**Custom Credentials Directory**
 
-Finally, to load the values into your environment, you should add the following code to your `wsgi.py` and `manage.py`
-files
+You can put your credentials files, both key and configuration, into a different directory, but must tell the library
+where they are.
 
 ```python
-from env_credentials.credentials import Credentials
-from django_credentials.lib import get_base_dir
+import os
 
-Credentials(get_base_dir()).load()
+from django_credentials import credentials
+from pathlib import Path
+
+current_dir = os.path.dirname(__file__)
+credentials.load(credentials_dir=Path(current_dir, credentials_dir))
+```
+
+When initializing and editing the credentials from the CLI, you can pass the `dir` option
+
+```bash
+./manage.py init_credentials -d <path>
+./manage.py edit_credentials -d <path>
 ```
