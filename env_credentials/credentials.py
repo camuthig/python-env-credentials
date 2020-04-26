@@ -4,6 +4,7 @@ import secrets
 from dotenv import dotenv_values, load_dotenv
 from io import StringIO
 from os import PathLike
+from pathlib import Path
 from typing import Dict
 from typing import Optional
 from typing import Text
@@ -11,6 +12,34 @@ from typing import Tuple
 from typing import Union
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+
+class CredentialsException(Exception):
+    message: str = 'Error loading credentials'
+
+    def __str__(self):
+        return self.message
+
+
+class DirectoryNotFoundException(CredentialsException):
+    def __init__(self, directory: Union[Text, PathLike]):
+        self.message = f'Could not find credentials directory {directory}'
+
+
+class KeyNotFoundException(CredentialsException):
+    def __init__(self, file: Union[Text, PathLike]):
+        self.message = f'Could not find key file: {file}'
+
+
+class CredentialsNotFoundException(CredentialsException):
+    def __init__(self, file: Union[Text, PathLike]):
+        self.message = f'Could not find credentials file {file}'
+
+
+class InvalidKeyException(CredentialsException):
+    def __init__(self, previous):
+        self.message = f'The found key was invalid {previous}'
+        self.previous = previous
 
 
 class Credentials:
@@ -25,14 +54,14 @@ class Credentials:
     _loaded: bool = False
 
     def __init__(self, credentials_dir: Union[Text, PathLike]):
+        if not Path(credentials_dir).exists():
+            raise DirectoryNotFoundException(credentials_dir)
+
         self.credentials_dir = credentials_dir
 
-    @staticmethod
-    def initialize(credentials_dir: Union[Text, PathLike]) -> 'Credentials':
-        instance = Credentials(credentials_dir)
-        instance._generate_key()
-        instance._generate_file()
-        return instance
+    def initialize(self):
+        self._generate_key()
+        self._generate_file()
 
     def _read(self) -> str:
         if self._content:
@@ -41,7 +70,12 @@ class Credentials:
         if not hasattr(self, 'key') or not hasattr(self, 'nonce') or not self.key or not self.nonce:
             self.key, self.nonce = self._get_key()
 
-        with open(self.get_config_path()) as f:
+        path = Path(self.get_config_path())
+
+        if not path.exists():
+            raise CredentialsNotFoundException(path)
+
+        with open(path) as f:
             encrypted = f.read()
 
         self._content = self.key.decrypt(self.nonce, bytes.fromhex(encrypted), None).decode('utf-8')
@@ -65,7 +99,6 @@ class Credentials:
         full_file_path = os.path.join(self.credentials_dir, self._key_filename)
 
         if os.path.exists(full_file_path):
-            print('Key already exists')
             key, nonce = self._get_key()
             return full_file_path, key, nonce
 
@@ -83,19 +116,26 @@ class Credentials:
             txt = s.read()
             encrypted_path = os.path.join(self.credentials_dir, self._config_filename)
             if os.path.exists(encrypted_path):
-                print('Credentials file already exists')
                 return
 
             self.write_file(txt)
 
     def _get_key(self) -> Tuple[AESGCM, bytes]:
         key = None
-        with open(os.path.join(self.credentials_dir, self._key_filename)) as f:
+        path = Path(self.credentials_dir, self._key_filename)
+
+        if not path.exists():
+            raise KeyNotFoundException(path)
+
+        with open(path) as f:
             key = f.read()
 
-        key, nonce = key.split('.', 2)
+        try:
+            key, nonce = key.split('.', 2)
 
-        return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
+            return AESGCM(bytes.fromhex(key)), bytes.fromhex(nonce)
+        except ValueError as e:
+            raise InvalidKeyException(e)
 
     def get_key_path(self) -> str:
         return os.path.join(self.credentials_dir, self._key_filename)

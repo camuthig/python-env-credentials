@@ -65,7 +65,10 @@ class Command(BaseCommand):
     def handle_init(self, *args, **kwargs):
         credentials_dir: Optional[Text] = kwargs.get('dir') or get_default_dir()
 
-        creds = credentials.Credentials.initialize(credentials_dir)
+        creds = credentials.Credentials(credentials_dir)
+
+        creds.initialize()
+
         self._ignore_key(creds.get_key_path())
 
     def handle_edit(self, *args, **kwargs):
