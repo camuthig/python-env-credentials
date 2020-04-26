@@ -39,7 +39,7 @@ INSTALLED_APPS = [
 You can then initialize the credentials files with
 
 ```bash
-./manage.py init_credentials
+./manage.py credentials init
 ```
 
 This will create a two new files called `master.key` and `credentials.env.enc`. It will  default to adding these files
@@ -61,7 +61,7 @@ credentials.load()
 You can then edit the values in the file using
 
 ```bash
-./manage.py edit_credentials
+./manage.py credentials edit
 ```
 
 **Custom Credentials Directory**
@@ -82,6 +82,5 @@ credentials.load(credentials_dir=Path(current_dir, credentials_dir))
 When initializing and editing the credentials from the CLI, you can pass the `dir` option
 
 ```bash
-./manage.py init_credentials -d <path>
-./manage.py edit_credentials -d <path>
+./manage.py credentials -d <path>
 ```
