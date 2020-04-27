@@ -19,9 +19,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Tox and any other packages
-      run: pip install --upgrade tox tox-gh-actions
+      run: pip install --upgrade tox tox-gh-actions coverage
     - name: Run Tox
       run: tox
+    - uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest

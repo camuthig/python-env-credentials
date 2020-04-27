@@ -33,11 +33,12 @@ flake8 = {version = "^3.7.9", optional = true}
 mypy = {version = "^0.770", optional = true}
 pytest = {version = "^5.2", optional = true}
 tox = {version = "^3.6.14", optional = true}
+codecov = {version = "^2.0.22", optional = true}
 
 [tool.poetry.extras]
 
 django = ["django"]
-dev = ["coverage", "django-stubs", "flake8", "mypy", "pytest", "tox"]
+dev = ["codecov", "coverage", "django-stubs", "flake8", "mypy", "pytest", "tox"]
 
 [build-system]
 requires = ["poetry>=0.12"]
