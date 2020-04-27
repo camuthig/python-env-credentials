@@ -23,3 +23,6 @@ jobs:
       run: pip install --upgrade tox tox-gh-actions
     - name: Run Tox
       run: tox
+    - name: Type checking
+      if: matrix.python-version == 3.8
+      run: mypy django_credentials env_credentials
