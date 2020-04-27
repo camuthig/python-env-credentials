@@ -38,7 +38,7 @@ pytest-cov = {version = "^2.8.1", extras = ["dev"]}
 [tool.poetry.extras]
 
 django = ["django"]
-dev = ["codecov", "coverage", "django-stubs", "flake8", "mypy", "pytest", "tox"]
+dev = ["codecov", "django-stubs", "flake8", "mypy", "pytest", "pytest-cov", "tox"]
 
 [build-system]
 requires = ["poetry>=0.12"]
