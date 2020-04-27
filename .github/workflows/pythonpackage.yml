@@ -34,6 +34,6 @@ jobs:
           python-version: 3.8
       - uses: dschep/install-poetry-action@v1.3
       - name: Poetry install
-        run: poetry install
+        run: poetry install --extras dev --extras django
       - name: Type check
         run: mypy django_credentials env_credentials
