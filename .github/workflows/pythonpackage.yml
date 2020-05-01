@@ -22,6 +22,8 @@ jobs:
       run: pip install --upgrade tox tox-gh-actions pytest-cov
     - name: Run Tox
       run: tox
+    - name: Combine reports
+      run: coverage combine .coverage django_credentials/.coverage
     - uses: codecov/codecov-action@v1
 
   lint:
