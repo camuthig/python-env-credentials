@@ -1,4 +1,5 @@
 import os
+import re
 import secrets
 
 from dotenv import dotenv_values, load_dotenv
@@ -15,7 +16,10 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
 class CredentialsException(Exception):
-    message: str = 'Error loading credentials'
+    message: str
+
+    def __init__(self, message: Optional[str] = None):
+        self.message = message or 'Error loading credentials'
 
     def __str__(self):
         return self.message
@@ -95,6 +99,24 @@ class Credentials:
         load_dotenv(stream=StringIO(self._read()))
         self._loaded = True
 
+    def _ignore_key(self, key_path):
+        ignore_file = os.path.join(self.credentials_dir, '.gitignore')
+
+        rel_path = os.path.relpath(key_path, self.credentials_dir)
+
+        if os.path.exists(ignore_file):
+            with open(ignore_file, 'r') as f:
+                content = f.read()
+
+            search = re.search(f'^{re.escape(rel_path)}$', content, re.MULTILINE)
+            if not search:
+                with open(ignore_file, 'a') as f:
+                    f.write(f'\n{rel_path}')
+                    return
+        else:
+            with open(ignore_file, 'a') as f:
+                f.write(rel_path)
+
     def _generate_key(self):
         full_file_path = os.path.join(self.credentials_dir, self._key_filename)
 
@@ -109,6 +131,9 @@ class Credentials:
 
         self.key = AESGCM(key)
         self.nonce = bytes.fromhex(nonce)
+
+        self._ignore_key(full_file_path)
+
 
     def _generate_file(self):
         sample_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'example.env')
@@ -153,3 +178,26 @@ class Credentials:
                 bytes(data, 'utf-8'),
                 None,
             ).hex())
+
+    def edit(self):
+        decrypted_filename = Path(self.credentials_dir, 'decrypted.ini')
+        try:
+            with open(decrypted_filename, 'w') as f:
+                f.write(self.read_file())
+
+            os.system(f'{os.getenv("EDITOR")} {decrypted_filename}')
+
+            with open(decrypted_filename, 'r') as f:
+                txt = f.read()
+                self.write_file(txt)
+
+            self.clear()
+
+        finally:
+            if decrypted_filename.is_file():
+                os.remove(decrypted_filename)
+
+    def clear(self):
+        self._content = None
+        self._values = None
+        self._loaded = None

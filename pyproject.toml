@@ -34,6 +34,7 @@ pytest = {version = "^5.2", optional = true}
 tox = {version = "^3.6.14", optional = true}
 codecov = {version = "^2.0.22", optional = true}
 pytest-cov = {version = "^2.8.1", optional = true}
+coverage = {version = "^5.1", optional = true, extras = ["dev"]}
 
 [tool.poetry.extras]
 

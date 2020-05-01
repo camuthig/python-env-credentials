@@ -5,6 +5,6 @@ poetry.lock
 *.swp
 .vscode
 dist
-.coverage
+**/.coverage
 coverage.xml
 .tox

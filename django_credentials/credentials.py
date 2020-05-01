@@ -9,22 +9,22 @@ from typing import Optional
 from typing import Union
 from typing import Text
 
-from env_credentials.credentials import Credentials
+from env_credentials.credentials import Credentials, CredentialsException
 
 
 def get_default_dir() -> PathLike:
     settings_module = os.environ.get('DJANGO_SETTINGS_MODULE')
 
     if settings_module is None:
-        raise Exception('Unable to find the DJANGO_SETTINGS_MODULE')
+        raise CredentialsException('Unable to find the DJANGO_SETTINGS_MODULE')
 
     f = importlib.find_loader(settings_module)
 
     if f is None:
-        raise Exception('Unable to find the DJANGO_SETTINGS_MODULE')
+        raise CredentialsException('Unable to find the DJANGO_SETTINGS_MODULE')
 
     if not isinstance(f, SourceFileLoader):
-        raise Exception('Invalid settings module')
+        raise CredentialsException('Invalid settings module')
 
     path = f.path
 
