@@ -83,4 +83,3 @@ class TestCredentials(TestCase):
             self.assertEqual(e.message, 'Unable to find the DJANGO_SETTINGS_MODULE')
 
             os.environ['DJANGO_SETTINGS_MODULE'] = existing_settings
-

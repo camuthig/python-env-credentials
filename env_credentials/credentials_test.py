@@ -1,7 +1,5 @@
-import io
 import os
 import pytest
-import sys
 
 from pathlib import Path
 from tempfile import TemporaryDirectory

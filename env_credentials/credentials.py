@@ -134,7 +134,6 @@ class Credentials:
 
         self._ignore_key(full_file_path)
 
-
     def _generate_file(self):
         sample_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'example.env')
         with open(sample_path) as s:
