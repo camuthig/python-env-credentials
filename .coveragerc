@@ -2,3 +2,5 @@
 source=
     django_credentials
     env_credentials
+
+omit=**/test_fixtures/*,**/apps.py,**/tests.py

@@ -12,9 +12,10 @@ from django.core.management import call_command
 def runtests():
     # create a temporary directory sturcture for the "project"
     # Create a specific subdirectory for the duration of the test suite.
-    os.mkdir('test_fixtures')
-    open(os.path.join('test_fixtures', '__init__.py'), 'a').close()
-    atexit.register(shutil.rmtree, 'test_fixtures')
+    test_fixtures_dir = os.path.join(os.path.dirname(__file__), 'test_fixtures')
+    os.mkdir(test_fixtures_dir)
+    open(os.path.join(test_fixtures_dir, '__init__.py'), 'a').close()
+    atexit.register(shutil.rmtree, test_fixtures_dir)
 
     if not settings.configured:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_credentials.test_fixtures')
