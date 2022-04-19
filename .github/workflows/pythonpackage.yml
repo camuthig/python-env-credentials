@@ -27,7 +27,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-${{ matrix.python-version }}-nox-
     - name: Run tests
-      run: nox -s "tests(django='${{ matrix.django-version }}')" --python ${{ matrix.python-version }} -r
+      run: nox -s "tests-${{ matrix.python-version}}(django='${{ matrix.django-version }}')" -r
     - uses: codecov/codecov-action@v2
       with:
         name: test-py${{ matrix.python-version }}-${{ matrix.os }}
