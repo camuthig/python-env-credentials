@@ -4,6 +4,7 @@ poetry.lock
 *.egg-info
 *.swp
 .vscode
+.idea
 dist
 **/.coverage
 coverage.xml
