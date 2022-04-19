@@ -36,6 +36,7 @@ tox = {version = "^3.25.0"}
 codecov = {version = "^2.0.22"}
 pytest-cov = {version = "^2.8.1"}
 coverage = {version = "^5.1"}
+nox = "^2022.1.7"
 
 [tool.poetry.extras]
 django = ["django"]
