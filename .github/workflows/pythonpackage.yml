@@ -1,42 +1,57 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Python package
 
 on: [push]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
+        django-version: ["2.2", "3.0"]
+    runs-on: ubuntu-latest
+    name: test-py${{ matrix.python-version }}-dj${{ matrix.django-version }}
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Tox and any other packages
-      run: pip install --upgrade tox tox-gh-actions pytest-cov
-    - name: Run Tox
-      run: tox
-    - uses: codecov/codecov-action@v1
-
+    - run: pip install nox
+    - uses: abatilo/actions-poetry@v2.0.0
+      with:
+        poetry-version: 1.1.13
+    - uses: actions/cache@v3
+      with:
+        path: ~/.nox
+        key: ${{ matrix.os }}-${{ matrix.python-version }}-nox-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          ${{ matrix.os }}-${{ matrix.python-version }}-nox-
+    - name: Run tests
+      run: nox -s "tests-${{ matrix.python-version}}(django='${{ matrix.django-version }}')" -r
+    - uses: codecov/codecov-action@v2
+      with:
+        name: test-py${{ matrix.python-version }}-${{ matrix.os }}
+         
   lint:
+    strategy:
+      matrix:
+        check: [ "types", "formatting" ]
     runs-on: ubuntu-latest
+    name: Lint
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      - uses: dschep/install-poetry-action@v1.3
-      - name: Poetry install
-        run: poetry install --extras dev --extras django
-      - name: Type check
-        run: mypy django_credentials env_credentials
-      - name: Lint
-        run: flake8 django_credentials env_credentials
+          architecture: x64
+      - run: pip install nox
+      - uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.13
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nox
+          key: ${{ runner.os }}-${{ runner.python-version }}-nox-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.python-version }}-nox-
+      - run: nox -s ${{ matrix.check }} -r
