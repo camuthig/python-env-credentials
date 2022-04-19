@@ -6,13 +6,13 @@ name: Python package
 on: [push]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
         django-version: ["2.2", "3.0"]
-    name: test-py${{ matrix.python-version }}-dj${{ matrix.django-verson }}
+    runs-on: ubuntu-latest
+    name: test-py${{ matrix.python-version }}-dj${{ matrix.django-version }}
 
     steps:
     - uses: actions/checkout@v3
