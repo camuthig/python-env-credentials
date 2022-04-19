@@ -6,8 +6,8 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
-        django-version: ["2.2", "3.0"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        django-version: ["3.2", "4.0"]
     runs-on: ubuntu-latest
     name: test-py${{ matrix.python-version }}-dj${{ matrix.django-version }}
 

@@ -1,8 +1,8 @@
 import nox
 
 
-@nox.session(python=["3.6", "3.7", "3.8"])
-@nox.parametrize("django", ["2.2", "3.0"])
+@nox.session(python=["3.7", "3.8", "3.9", "3.10"])
+@nox.parametrize("django", ["3.2", "4.0"])
 def tests(session, django):
     session.run("poetry", "install", external=True)
     session.install(f"django=={django}")
