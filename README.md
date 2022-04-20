@@ -1,5 +1,9 @@
 # Env Credentials
 
+![Tests](https://github.com/camuthig/python-env-credentials/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/camuthig/python-env-credentials/branch/master/graph/badge.svg?token=NALVSGOTSH)](https://codecov.io/gh/camuthig/python-env-credentials)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Manage environment variables use the dotenv pattern with encrypted files.
 
 This project is an attempted port of the [credentials pattern](https://edgeguides.rubyonrails.org/security.html#custom-credentials)

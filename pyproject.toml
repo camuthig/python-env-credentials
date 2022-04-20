@@ -40,9 +40,23 @@ codecov = "^2.0.22"
 pytest-cov = "^2.8.1"
 coverage = "^5.1"
 nox = "^2022.1.7"
+pytest-django = "^4.5.2"
 
 [tool.poetry.extras]
 django = ["django"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.test_fixtures.settings"
+
+[tool.coverage.paths]
+source = ["env_credentials", "django_credentials"]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+omit = ["**/__init__.py"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
