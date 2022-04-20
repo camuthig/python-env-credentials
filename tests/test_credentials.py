@@ -4,11 +4,11 @@ import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .credentials import Credentials
-from .credentials import DirectoryNotFoundException
-from .credentials import KeyNotFoundException
-from .credentials import CredentialsNotFoundException
-from .credentials import InvalidKeyException
+from env_credentials.credentials import Credentials
+from env_credentials.credentials import DirectoryNotFoundException
+from env_credentials.credentials import KeyNotFoundException
+from env_credentials.credentials import CredentialsNotFoundException
+from env_credentials.credentials import InvalidKeyException
 
 
 @pytest.fixture

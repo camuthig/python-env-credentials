@@ -1,3 +1,0 @@
-[run]
-source=.
-omit=test_fixtures/*,apps.py,tests.py
