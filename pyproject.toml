@@ -22,7 +22,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-cryptography = "^2.9"
+cryptography = "^3.2"
 python-dotenv = "^0.19"
 
 django = [
