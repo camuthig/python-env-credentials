@@ -8,6 +8,9 @@ jobs:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
         django-version: ["3.2", "4.0"]
+        exclude:
+          - python-version: "3.7"
+            django-version: "4.0"
     runs-on: ubuntu-latest
     name: test-py${{ matrix.python-version }}-dj${{ matrix.django-version }}
 
@@ -27,7 +30,7 @@ jobs:
         restore-keys: |
           ${{ matrix.os }}-${{ matrix.python-version }}-nox-
     - name: Run tests
-      run: nox -s "tests-${{ matrix.python-version}}(django='${{ matrix.django-version }}')" -r
+      run: nox -s "tests(python='${{ matrix.python-version}}', django='${{ matrix.django-version }}')" -r
     - uses: codecov/codecov-action@v2
       with:
         name: test-py${{ matrix.python-version }}-${{ matrix.os }}

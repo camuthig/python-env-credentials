@@ -1,8 +1,16 @@
 import nox
 
 
-@nox.session(python=["3.7", "3.8", "3.9", "3.10"])
-@nox.parametrize("django", ["3.2", "4.0"])
+@nox.session
+@nox.parametrize(
+    "python, django",
+    [
+        (python, django)
+        for python in ("3.7", "3.8", "3.9", "3.10")
+        for django in ("3.2", "4.0")
+        if (python, django) != ("3.7", "4.0")
+    ],
+)
 def tests(session, django):
     session.run("poetry", "install", external=True)
     session.install(f"django=={django}")

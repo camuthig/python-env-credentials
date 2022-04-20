@@ -25,7 +25,10 @@ python = "^3.7"
 cryptography = "^2.9"
 python-dotenv = "^0.19"
 
-django = {version = "^3.2 || ^4.0", optional = true}
+django = [
+    {version = "^3.2", python = "3.7", optional = true},
+    {version = "^3.2 || ^4.0", python = "^3.8", optional = true}
+]
 
 [tool.poetry.dev-dependencies]
 django-stubs = "^1.5.0"
