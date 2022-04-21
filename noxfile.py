@@ -30,3 +30,5 @@ def types(session):
 def formatting(session):
     session.run("poetry", "install", external=True)
     session.run("flake8", *lint_dirs)
+    session.run("isort", "--check-only", "--diff", "--force-single-line-imports", "--profile", "black", *lint_dirs)
+    session.run("black", "--check", "--diff", *lint_dirs)
