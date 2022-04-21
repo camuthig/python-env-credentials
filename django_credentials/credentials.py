@@ -1,30 +1,30 @@
 import importlib
 import os
 import sys
-
 from importlib.machinery import SourceFileLoader
 from os import PathLike
 from pathlib import Path
 from typing import Optional
-from typing import Union
 from typing import Text
+from typing import Union
 
-from env_credentials.credentials import Credentials, CredentialsException
+from env_credentials.credentials import Credentials
+from env_credentials.credentials import CredentialsException
 
 
 def get_default_dir() -> PathLike:
-    settings_module = os.environ.get('DJANGO_SETTINGS_MODULE')
+    settings_module = os.environ.get("DJANGO_SETTINGS_MODULE")
 
     if settings_module is None:
-        raise CredentialsException('Unable to find the DJANGO_SETTINGS_MODULE')
+        raise CredentialsException("Unable to find the DJANGO_SETTINGS_MODULE")
 
     f = importlib.find_loader(settings_module)
 
     if f is None:
-        raise CredentialsException('Unable to find the DJANGO_SETTINGS_MODULE')
+        raise CredentialsException("Unable to find the DJANGO_SETTINGS_MODULE")
 
     if not isinstance(f, SourceFileLoader):
-        raise CredentialsException('Invalid settings module')
+        raise CredentialsException("Invalid settings module")
 
     path = f.path
 
