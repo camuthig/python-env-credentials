@@ -41,12 +41,18 @@ pytest-cov = "^2.8.1"
 coverage = "^5.1"
 nox = "^2022.1.7"
 pytest-django = "^4.5.2"
+isort = "^5.10.1"
+black = "^22.3.0"
+pre-commit = "^2.18.1"
 
 [tool.poetry.extras]
 django = ["django"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.test_fixtures.settings"
+
+[tool.black]
+line-length = 128
 
 [tool.coverage.paths]
 source = ["env_credentials", "django_credentials"]

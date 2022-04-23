@@ -34,7 +34,7 @@ jobs:
     - uses: codecov/codecov-action@v2
       with:
         name: test-py${{ matrix.python-version }}-${{ matrix.os }}
-         
+
   lint:
     strategy:
       matrix:
