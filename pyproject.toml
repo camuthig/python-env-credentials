@@ -21,14 +21,11 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 cryptography = "^3.2"
 python-dotenv = "^0.19"
 
-django = [
-    {version = "^3.2", python = "3.7", optional = true},
-    {version = "^3.2 || ^4.0", python = "^3.8", optional = true}
-]
+django = ">= 3.2, < 5.2"
 
 [tool.poetry.dev-dependencies]
 django-stubs = "^1.5.0"
